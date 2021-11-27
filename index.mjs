@@ -7,14 +7,15 @@ const stdlib = loadStdlib(process.env);
 (async () => {
   const startingBalance = stdlib.parseCurrency(100);
 
-  const [ accOwner, accBob ] =
-    await stdlib.newTestAccounts(2, startingBalance);
+  const [ accOwner, accLender, accBorrower ] =
+    await stdlib.newTestAccounts(3, startingBalance);
 
   console.log('Hello, Alice and Bob!');
 
   console.log('Launching...');
   const ctcOwner = accOwner.contract(backend);
-  const ctcBob = accBob.contract(backend, ctcOwner.getInfo());
+  const ctcLender = accLender.contract(backend, ctcOwner.getInfo());
+  const ctcBorrower = accBorrower.contract(backend, ctcOwner.getInfo());
 
   console.log('creating dash token');
   const dashToken = await launchToken(stdlib, accOwner, 'dashToken', 'DTN')
@@ -38,15 +39,18 @@ const stdlib = loadStdlib(process.env);
         return dashToken.id;
       },
         
-      viewLendingToken: (Token) => {
-        console.log(`The token accepted for lending is ${Token}`)
-      },
+      ...Common()
     }),
     
-    // backend.Bob(ctcBob, {
-    //   ...stdlib.hasRandom,
-    //   // implement Bob's interact object here
-    // }),
+    backend.Lender(ctcLender, {
+      ...stdlib.hasRandom,
+      // implement Bob's interact object here
+      ...Common(),
+    }),
+
+    backend.Borrower(ctcBorrower, {
+      ...Common()
+    })
   ]);
 
   console.log('Goodbye, Alice and Bob!');

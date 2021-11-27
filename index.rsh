@@ -12,13 +12,13 @@ export const main = Reach.App(() => {
 
   const Lender = ParticipantClass('Lender', {
     // Specify lender's interact interface here
+    ...common,
     lend: Fun([], Object({
       token: UInt,
       amount: UInt
     })),
-    ...common
   });
-  const Borrower = ParticipantClass('borrower', {
+  const Borrower = ParticipantClass('Borrower', {
     // Specify Bob's interact interface here
     ...common
   });
@@ -34,31 +34,31 @@ export const main = Reach.App(() => {
   Owner.pay([[0, acceptedLendingToken]]);
   commit()  
   
-  Owner.only(() => {
-    interact.viewLendingToken(acceptedLendingToken);
+  each([Owner, Lender, Borrower], () => {
+    interact.viewLendingToken(acceptedLendingToken)
   });
     
-  Lender.only(() => {
-    const {token, amount} = declassify(interact.lend());
-    assume(amount > 0, 'Amount must be greater than zero');
-  });
+  // Lender.only(() => {
+  //   const {token, amount} = declassify(interact.lend());
+  //   assume(amount > 0, 'Amount must be greater than zero');
+  // });
   
-  Lender.publish(token, amount);
+  // Lender.publish(token, amount);
   
-  const liquidityDetails = Object({
-    "token": UInt, 
-    "collateralFactor": UInt,
-    "totalBorrowed": UInt,
-    'totalSupply': UInt,
-    "lendAPY": UInt,
-    "borrowAPY": UInt
-  });
+  // const liquidityDetails = Object({
+  //   "token": UInt, 
+  //   "collateralFactor": UInt,
+  //   "totalBorrowed": UInt,
+  //   'totalSupply': UInt,
+  //   "lendAPY": UInt,
+  //   "borrowAPY": UInt
+  // });
 
-  const liquidity = Object({
-    "liquidityDetails": liquidityDetails
-  });
+  // const liquidity = Object({
+  //   "liquidityDetails": liquidityDetails
+  // });
   
-  require(amount > 0, 'Amount must be greater than zero');
+  // require(amount > 0, 'Amount must be greater than zero');
   
   // liquidityOwner.token = token;
   // liquidityOwner.balance = amount;
@@ -77,7 +77,7 @@ export const main = Reach.App(() => {
   //   borrowAPY: 5
   // };
 
-  commit();
+  // commit();
 
 
   // commit();
