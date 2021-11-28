@@ -8,13 +8,17 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './assets/styles/tailwind.css';
 import NewLanding from './pages/NewLand';
 import DefaultFooter from './components/DefaultFooter';
+import LendingPool from './pages/LendingPool';
+import SupplyBorrow from './pages/SupplyBorrow'
 
 function App() {
     return (
         <Switch>
-            <div className="bg-contract w-full">
-            <Route exact path="/new" component={Landing} />
+            <div>
+          
             <Route exact path="/" component={NewLanding} />
+            <Route exact path="/lending" component={LendingPool} />
+            <Route exact path="/mode" component={SupplyBorrow} />
             {/* <Redirect from="*" to="/" /> */}
             {/* <DefaultFooter /> */}
             </div>

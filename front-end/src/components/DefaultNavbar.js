@@ -45,7 +45,7 @@ export default function DefaultNavbar() {
                     <Nav>
                         <div className="flex flex-col z-50 lg:flex-row lg:items-center">
                             <NavLink
-                                href="/"
+                                href="/lending"
                                 target="_blank"
                                 rel="noreferrer"
                                 ripple="light"
