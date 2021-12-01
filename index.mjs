@@ -21,6 +21,11 @@ const stdlib = loadStdlib(process.env);
   const dashToken = await launchToken(stdlib, accOwner, 'dashToken', 'DTN')
   console.log(`dashtoken ==> ${dashToken.id}`)
   
+  console.log('Lender accepts lending token');
+  
+  accLender.tokenAccept(dashToken.id);
+  dashToken.mint(accLender, 100000000);
+
   console.log('Starting backends...');
 
   const Common = () => ({
@@ -46,6 +51,21 @@ const stdlib = loadStdlib(process.env);
       ...stdlib.hasRandom,
       // implement Bob's interact object here
       ...Common(),
+
+      acceptLiquidityToken: (token) => {
+        console.log(`Lender accepting liquidity token ${token}`)
+
+        accLender.tokenAccept(token);
+      },
+
+      lend: () => {
+        console.log('try lending');
+        return { token: dashToken.id, amount: 100000 };
+      },
+
+      logInt: (amount) => {
+        console.log(`Amount sent in is: ${amount}`)
+      },
     }),
 
     backend.Borrower(ctcBorrower, {
