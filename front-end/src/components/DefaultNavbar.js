@@ -13,28 +13,32 @@ import DropdownItem from '@material-tailwind/react/DropdownItem';
 import Icon from '@material-tailwind/react/Icon';
 import Button from '@material-tailwind/react/Button';
 import Logo from '../assets/img/logo.png';
-import Algo from '../assets/img/algo.png';
-import Meta from '../assets/img/metamask.png'
-import CardImage from '@material-tailwind/react/CardImage';
+import Algo from '../assets/img/algo_logo.png';
+
+import { useDispatch } from "react-redux";
+import { storeWallet } from '../redux/actions/networkActions';
 
 export default function DefaultNavbar() {
     const [openNavbar, setOpenNavbar] = useState(false);
+    const dispatch = useDispatch()
+
+    const handleConnect = () => {
+        dispatch(storeWallet('ALGO'))
+    }
 
     return (
         <Navbar color="transparent" navbar>
             <NavbarContainer>
                 <NavbarWrapper>
-                    <a
-                        href="/"
-                        target="_blank"
-                        className="items-center inline-flex space-x-4 md:w-40"
-                        rel="noreferrer"
+                    <Link
+                        to="/"
+                        className="items-center inline-flex space-x-4 md:w-full"
                     >
-                          <img className="md:w-18 md:h-16 " alt="logo" src={Logo} />
+                        <img className="md:w-2/6 md:h-2/6 " alt="logo" src={Logo} />
                         <NavbarBrand >
-                           <span className="text-xl" > Berry </span>
-                            </NavbarBrand>
-                    </a>
+                            <span className="text-xl" > Berry </span>
+                        </NavbarBrand>
+                    </Link>
                     <NavbarToggler
                         onClick={() => setOpenNavbar(!openNavbar)}
                         color="white"
@@ -44,33 +48,47 @@ export default function DefaultNavbar() {
                 <NavbarCollapse open={openNavbar}>
                     <Nav>
                         <div className="flex flex-col z-50 lg:flex-row lg:items-center">
-                            <NavLink
-                                href="/lending"
-                                target="_blank"
-                                rel="noreferrer"
-                                ripple="light"
-                            >
-                               
-                                &nbsp;Lending Pool
-                            </NavLink>
-                            <NavLink
-                                href="/"
-                                target="_blank"
-                                rel="noreferrer"
-                                ripple="light"
-                            >
-                               
-                                &nbsp;Market
-                            </NavLink>
-                            <div className="text-white">
+                            <Link to="/lending">
+                                <NavLink
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    ripple="light"
+                                >
+
+                                    &nbsp;Lending Pool
+                                </NavLink>
+                            </Link>
+
+                            <Link to="/">
+                                <NavLink
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    ripple="light"
+                                >
+
+                                    &nbsp;Market
+                                </NavLink>
+                            </Link>
+
+                            <Link to="/lending">
+                                <NavLink
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    ripple="light"
+                                >
+
+                                    &nbsp;Assets
+                                </NavLink>
+                            </Link>
+                            {/* <div className="text-white">
                                 <Dropdown
                                     color="transparent"
                                     size="sm"
                                     buttonType="link"
                                     buttonText={
                                         <div className="py-2.5 font-medium flex items-center">
-                                            <span className="ml-2">
-                                                Assets
+                                            <span className="ml-2 uppercase">
+                                            Assets
                                             </span>
                                         </div>
                                     }
@@ -97,33 +115,35 @@ export default function DefaultNavbar() {
                                         </DropdownItem>
                                     </Link>
                                 </Dropdown>
-                            </div>
-                           
+                            </div> */}
+
                             <div className="text-white bg-new-gray-100 rounded-lg">
-                                    <Dropdown
+                                <Dropdown
                                     color="transparent"
                                     size="sm"
                                     buttonType="link"
-                                    
+
                                     buttonText={
                                         <span className="text-green-400 normal-case text-sm" >
-                                    Connect to a wallet
-                                    </span>
+                                            Connect to a wallet
+                                        </span>
                                     }
                                     ripple="light"
                                 >
-                                    <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                           <div className="space-x-4" >
-                                           <span className="inline-block text-md" >
+
+                                    <DropdownItem color="lightGreen">
+                                        <div className="space-x-4"
+                                            onClick={() => handleConnect()}
+                                        >
+                                            <span className="inline-block text-md" >
                                                 Algo wallet
                                             </span>
-                                           <img className="inline-block" alt="dai" src={Algo} />
-                                           
-                                           </div>
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link to="/">
+                                            <img className="inline-block" alt="dai" src={Algo} />
+
+                                        </div>
+                                    </DropdownItem>
+
+                                    {/* <Link to="/">
                                         <DropdownItem color="lightGreen">
                                         <div className="space-x-4" >
                                            <span className="inline-block text-md" >
@@ -133,13 +153,13 @@ export default function DefaultNavbar() {
                                            
                                            </div>
                                         </DropdownItem>
-                                    </Link>
-                                   
+                                    </Link> */}
+
                                 </Dropdown>
-                                </div>
-                                    
-                              
-                            
+                            </div>
+
+
+
                             <NavLink
                                 href="/"
                                 target="_blank"
@@ -176,7 +196,7 @@ export default function DefaultNavbar() {
                                     size="xl"
                                 />
                             </NavLink>
-                           
+
                         </div>
                     </Nav>
                 </NavbarCollapse>

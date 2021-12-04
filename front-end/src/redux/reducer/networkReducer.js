@@ -2,7 +2,8 @@ import {
     SET_ACCOUNT,
     SET_BALANCE,
     SET_NETWORK,
-    SET_CONTRACT
+    SET_CONTRACT,
+    STORE_USER
 } from '../types'
 
 const initNetState = {
@@ -10,6 +11,7 @@ const initNetState = {
     bal: null,
     net: null,
     ctc: null,
+    user: {}
 };
 
 export const networkReducer = (state = initNetState, action) => {
@@ -22,6 +24,8 @@ export const networkReducer = (state = initNetState, action) => {
             return { ...state, net: action.payload };
         case SET_CONTRACT:
             return { ...state, ctc: action.payload };
+        case STORE_USER:
+            return { ...state, user: action.payload };
         default:
             return state;
 

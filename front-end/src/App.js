@@ -1,5 +1,4 @@
 import { Switch, Route, Redirect } from 'react-router-dom';
-import Landing from './pages/Landing';
 
 // Font Awesome Style Sheet
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -18,7 +17,7 @@ function App() {
           
             <Route exact path="/" component={NewLanding} />
             <Route exact path="/lending" component={LendingPool} />
-            <Route exact path="/mode" component={SupplyBorrow} />
+            <Route exact path="/mode/:selected" component={SupplyBorrow} />
             {/* <Redirect from="*" to="/" /> */}
             {/* <DefaultFooter /> */}
             </div>

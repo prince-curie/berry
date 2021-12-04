@@ -953,12 +953,7 @@ video {
 .bg-landing-background{
 	background-image: linear-gradient(rgba(0,0,0, 0.75), rgba(0,0,0, 0.75)), url('/src/assets/img/header.png');
 }
-.bg-login-background{
-	background-image: linear-gradient(rgba(0,0,0, 0.75), rgba(0,0,0, 0.75)), url('/src/assets/img/background-1920x1280.jpg');
-}
-.bg-profile-background{
-	background-image: linear-gradient(rgba(0,0,0, 0.75), rgba(0,0,0, 0.75)), url('/src/assets/img/background-1920x1080.jpg');
-}
+
 .bg-gradient-to-tr{
 	background-image: linear-gradient(to top right, var(--tw-gradient-stops));
 }
@@ -1947,6 +1942,7 @@ video {
 .border-transparent{border-color:transparent}
 .bg-white{--tw-bg-opacity:1;background-color:rgba(255, 255, 255, var(--tw-bg-opacity))}
 .bg-new-gray-100{--tw-bg-opacity:0.07;background-color:rgba(245, 245, 245, var(--tw-bg-opacity))}
+.bg-new-gray-200{--tw-bg-opacity:0.5;background-color:rgba(245, 245, 245, var(--tw-bg-opacity))}
 .bg-gray-100{--tw-bg-opacity:1;background-color:rgba(245, 245, 245, var(--tw-bg-opacity))}
 .bg-orange-900{--tw-bg-opacity:1;background-color:rgba(230, 81, 0, var(--tw-bg-opacity))}
 .bg-light-blue-500{--tw-bg-opacity:1;background-color:rgba(3, 169, 244, var(--tw-bg-opacity))}

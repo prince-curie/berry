@@ -17,7 +17,7 @@ export default function DefaultFooter() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                   <CardImage className=" w-14 md:w-7/12 md:h-12" alt="logo" src={Logo} />
+                                   <CardImage className=" w-10 md:w-7/12 md:h-12" alt="logo" src={Logo} />
                                 </a>
                                 <a
                                     href="/"
