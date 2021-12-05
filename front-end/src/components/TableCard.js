@@ -56,7 +56,8 @@ export default function TableCard({ returnInput, collat, returnCollat, header, d
                                         </div>
                                     </th>
                                     <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap  py-4 text-left">
-                                        $2,500 USDC
+                                        1,400.00 USDC
+                                        <p className="text-xs">($1,400.00)</p>
                                     </th>
                                     <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap  py-4 text-left">
                                         <span className="text-new-green" >
@@ -155,11 +156,12 @@ export default function TableCard({ returnInput, collat, returnCollat, header, d
                                         </div>
                                     </th>
                                     <th className=" align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                                        $1,800 USD
+                                        1,800 ALGO
+                                        <p className="text-xs">($2,880.00)</p>
                                     </th>
                                     <th className=" align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
                                         <span className="" >
-                                            --
+                                          
                                         </span>
                                     </th>
                                    

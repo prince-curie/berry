@@ -52,7 +52,8 @@ export default function TableDetail({ returnInput, header, name, mode }) {
                                         </div>
                                     </th>
                                     <th className=" align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                                        $1,800 USDC
+                                        1,800 USDC
+                                        <p className="text-xs">($1,800.00)</p>
                                     </th>
                                    
                                     <th className=" align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">

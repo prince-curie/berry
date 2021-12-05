@@ -15,6 +15,8 @@ import { Link } from "react-router-dom";
 import Icon from '@material-tailwind/react/Icon';
 
 export default function NewLanding() {
+    
+
     return (
         <main className="bg-contract" >
             <div className="absolute w-full z-20">

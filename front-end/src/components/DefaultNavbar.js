@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@material-tailwind/react/Navbar';
 import NavbarContainer from '@material-tailwind/react/NavbarContainer';
@@ -15,16 +15,23 @@ import Button from '@material-tailwind/react/Button';
 import Logo from '../assets/img/logo.png';
 import Algo from '../assets/img/algo_logo.png';
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { storeWallet } from '../redux/actions/networkActions';
 
 export default function DefaultNavbar() {
     const [openNavbar, setOpenNavbar] = useState(false);
     const dispatch = useDispatch()
 
+  
+
     const handleConnect = () => {
         dispatch(storeWallet('ALGO'))
     }
+
+    useEffect(() => {
+        const user = JSON.stringify(localStorage.getItem('address'))
+    console.log('my user', user)
+    }, [dispatch])
 
     return (
         <Navbar color="transparent" navbar>
@@ -80,42 +87,7 @@ export default function DefaultNavbar() {
                                     &nbsp;Assets
                                 </NavLink>
                             </Link>
-                            {/* <div className="text-white">
-                                <Dropdown
-                                    color="transparent"
-                                    size="sm"
-                                    buttonType="link"
-                                    buttonText={
-                                        <div className="py-2.5 font-medium flex items-center">
-                                            <span className="ml-2 uppercase">
-                                            Assets
-                                            </span>
-                                        </div>
-                                    }
-                                    ripple="light"
-                                >
-                                    <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                            ETH
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                            BNB
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                            ADA
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                            BUSD
-                                        </DropdownItem>
-                                    </Link>
-                                </Dropdown>
-                            </div> */}
+                           
 
                             <div className="text-white bg-new-gray-100 rounded-lg">
                                 <Dropdown

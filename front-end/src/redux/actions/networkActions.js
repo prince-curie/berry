@@ -5,7 +5,8 @@ import {
     SET_CONTRACT,
     STORE_USER
 } from '../types';
-import { loadStdlib } from "@reach-sh/stdlib";
+//import { loadStdlib } from "@reach-sh/stdlib";
+import * as reach from '@reach-sh/stdlib/ALGO'
 
 export const setAccount = (acc) => {
     return {
@@ -37,20 +38,29 @@ export const setContract = (ctc) => {
 
 export const storeWallet = (payload) => {
      return async (dispatch) => {
-         console.log('received', payload)
-          // Load standard library with selected network
-      const stdlib = loadStdlib(payload);
-      //get the account
-      const acc = await stdlib.getDefaultAccount();
-       // Get the balance of the account
-    const balAtomic = await stdlib.balanceOf(acc);
-    const bal = stdlib.formatCurrency(balAtomic, 4);
-    let user = {
-        address: acc,
-        balance: bal,
-        network: payload
-    }
-
-    dispatch({ type: STORE_USER, payLoad: user });
+         let user;
+        if(typeof window.AlgoSigner !== 'undefined') {
+            // connects to the browser AlgoSigner instance
+            window.AlgoSigner.connect()
+            // finds the TestNet accounts currently in AlgoSigner
+            .then(() => window.AlgoSigner.accounts({
+                ledger: 'MainNet'
+            }))
+            .then((accountData) => {
+                // the accountData object should contain the Algorand addresses from TestNet that AlgoSigner currently knows about
+                console.log(accountData[0]);
+                user = accountData[0]
+                localStorage.setItem('address', user.address)
+                dispatch({ type: STORE_USER, payLoad: accountData[0] });
+            })
+            .catch((e) => {
+                // handle errors and perform error cleanup here
+                console.error(e);
+            })
+        } else {
+            alert('Please install AlgoSigner')
+        }
+      
+   
      }
 }
