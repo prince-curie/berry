@@ -10,25 +10,17 @@ const common = {
   getDate: Fun([], UInt)
 }
 
-// const Logger = {
-//   logString: Fun([Bytes(8)], Null),
-//   logInt: Fun([UInt], Null),
-//   logBool: Fun([Bool], Null)
-// };
-
 export const main = Reach.App(() => {
   const Owner = Participant('Owner', {
     acceptToken: Token,
     ...common
   });
 
-  const Lender = Participant('Lender', {
+  const Lender = ParticipantClass('Lender', {
     // Specify lender's interact interface here
     ...common,
-    // ...Logger,
-    // acceptLiquidityToken: Fun([Token], Null),
     lend: Fun([], Object({token: Token, amount: UInt, createdAt: UInt })),
-    withDraw: Fun([UInt], Null),
+    withdraw: Fun([UInt], Null),
   });
 
   const Borrower = ParticipantClass('Borrower', {
@@ -55,11 +47,6 @@ export const main = Reach.App(() => {
     createdAt: UInt
   }));
 
-  // const berryToken = new Token({ 
-  //   'name': Bytes(32).pad('BerryToken'), 
-  //   'symbol': Bytes(8).pad('BTN'),
-  // });
-
   commit();
 
 
@@ -68,75 +55,83 @@ export const main = Reach.App(() => {
   });
 
   Lender.only(() => {
-    // interact.acceptLiquidityToken(berryToken);
+
   });
   
   Lender.publish();
 
-  
-  
-
-  var [totalVested, totalSupply] = [balance(acceptedLendingTokenId), 1000000000];
-  invariant(balance(acceptedLendingTokenId) == totalVested);
-  while(totalSupply > 0 || totalVested >= 0) {
+  var totalSupply = 1000000000;
+  invariant(balance() == 0);
+  while(totalSupply > 0) {
 
     commit()  
   
     Lender.only(() => {
-      // interact.acceptLiquidityToken(berryToken);
       
       const { amount, token, createdAt } = declassify(interact.lend());
-      // assume(amount <= balance(berryToken));
+      const lendingUserAccount = this;
+
       assume(amount > 0, 'Amount must be greater than zero');
       assume(token === acceptedLendingTokenId, 'Token not allowed')
-      assume(createdAt > 10000000);
-      assume(balance(acceptedLendingTokenId) == totalVested);
+      assume(createdAt > 1000);
+      assume(totalSupply >= amount);
     });
     
-    Lender.publish(amount, createdAt)
-      .pay([[amount, acceptedLendingTokenId]]);
-    
-    // Lender.interact.logInt(amount);
-    require(Lender == this);
-    // require(totalSupply > 0);
-    require(createdAt > 10000000);
-    // require(amount <= balance(berryToken));
-    require(amount > 0, 'Amount must be greater than zero');
-    // require(token === acceptedLendingToken, 'Token not allowed');
-    
-    // transfer(amount, berryToken).to(this);
+    Lender.publish(amount, createdAt, lendingUserAccount)
+      .pay([[amount, acceptedLendingTokenId]])
+      .when(Lender == lendingUserAccount)
+      .timeout(false);
 
-    if(amount) {
-      liquidityData[this] = {
+    require(totalSupply >= amount);
+    require(createdAt > 1000);
+    require(amount > 0, 'Amount must be greater than zero');
+
+    const checkDeposit = fromSome(
+      liquidityData[lendingUserAccount],
+      {amount: 0, createdAt: 0}
+    );
+
+    if(checkDeposit.createdAt == 0) {
+      liquidityData[lendingUserAccount] = {
         amount: amount,
         createdAt: createdAt 
       };
-
-      [totalVested, totalSupply] = [
-        totalVested + amount, totalSupply - amount
-      ];
-      
-      continue;
+    } else {
+      liquidityData[lendingUserAccount] = {
+        amount: checkDeposit.amount + amount,
+        createdAt: createdAt 
+      };
     }
+    
+    totalSupply = totalSupply - amount
+      
+    continue;  
+  }
 
+  var totalVested = 1000000000; 
+  invariant(balance() == 0);
+  while(totalVested > 0 && balance(acceptedLendingTokenId) > 0) {
     commit();
     
     Lender.only(() => {
       // Time stamp in days.
       const todayDate = declassify(interact.getDate());
+      const lenderAccount = this;
 
       const deposit = fromSome(
-          liquidityData[this],
+          liquidityData[lenderAccount],
           {amount: 0, createdAt: 0}
       );
       
       const amountDeposited = deposit.amount;
       const dateDeposited = deposit.createdAt;
 
-      assume(todayDate > dateDeposited);
+      assume(dateDeposited > 0);
+      assume(todayDate >= dateDeposited);
+      assume(amountDeposited > 0);
       assume(totalVested > amountDeposited);
       assume(totalVested > 0);
-      assume(balance(acceptedLendingTokenId) == totalVested)
+      assume(balance(acceptedLendingTokenId) >= amountDeposited);
 
       const daysVested = todayDate - dateDeposited;
 
@@ -144,47 +139,34 @@ export const main = Reach.App(() => {
       const interest = (interestPercent/100) * amountDeposited
       const totalEarning = interest + amountDeposited;
 
-      interact.withDraw(totalEarning);
+      interact.withdraw(totalEarning);
       
     });
     Lender.publish(
-      todayDate, dateDeposited, amountDeposited, daysVested, interest, totalEarning
-    );
-    // .pay([[amountDeposited, berryToken]]);
-      
-    require(Lender == this)
-    require(todayDate > dateDeposited);
-    require(totalEarning > amountDeposited);
-    require(totalVested >= amountDeposited);
+      todayDate, dateDeposited, amountDeposited, daysVested, interest, totalEarning, lenderAccount
+    ).when(Lender == lenderAccount)
+    .timeout(false);
+    
+    require(dateDeposited > 0);
+    require(todayDate >= dateDeposited);
+    require(amountDeposited > 0);
+    require(balance(acceptedLendingTokenId) >= amountDeposited);
+    require(totalEarning >= amountDeposited);
+    require(totalVested > amountDeposited);
     require(balance(acceptedLendingTokenId) >= totalEarning);
     require(totalVested > 0);  
 
     delete liquidityData[this];
   
-    if(amountDeposited) {
-      transfer(amountDeposited, acceptedLendingTokenId).to(this);
-      transfer(interest, acceptedLendingTokenId).to(this);
-      // berryToken.burn(amountDeposited);
-      
-      [totalVested, totalSupply] = [
-        // totalVested - amountDeposited, totalSupply
-        totalVested - totalEarning, totalSupply
-      ];
+    transfer(totalEarning, acceptedLendingTokenId).to(lenderAccount);
+    
+    totalVested = totalVested - totalEarning;
 
-      continue;
-    } 
+    continue;
   } 
   
-  transfer(totalVested, acceptedLendingTokenId).to(Lender);
+  transfer(balance(acceptedLendingTokenId), acceptedLendingTokenId).to(Owner);
   require(balance(acceptedLendingTokenId) == 0);
-  require(totalVested == 0);
-
-  // require(balance(berryToken) == berryToken.supply());
-  // berryToken.burn(berryToken.supply());
-  // require(berryToken.supply() == 0);
-  
-  // berryToken.destroy();
-  // assert(berryToken.destroyed() == true);
 
   commit();
 
