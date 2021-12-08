@@ -133,12 +133,8 @@ export const main = Reach.App(() => {
       const amountDeposited = deposit.amount;
       const dateDeposited = deposit.createdAt;
 
-      assume(dateDeposited > 0);
       assume(todayDate >= dateDeposited);
-      assume(amountDeposited > 0);
-      assume(totalVested > amountDeposited);
-      assume(totalVested > 0);
-      assume(balance(acceptedLendingTokenId) >= amountDeposited);
+      assume(balance(acceptedLendingTokenId) >= amountDeposited, 'Currently not enough money to pay you, try again later.');
 
       const daysVested = todayDate - dateDeposited;
 
@@ -153,22 +149,16 @@ export const main = Reach.App(() => {
       todayDate, dateDeposited, amountDeposited, daysVested, interest, totalEarning, lenderAccount
     ).when(
       Lender == lenderAccount && 
-      // dateDeposited > 0 && 
-      // amountDeposited > 0 &&
       isSome(liquidityData[lenderAccount]) &&
-      totalVested > amountDeposited
+      totalVested >= amountDeposited
     )
     .timeout(false);
     
-    require(dateDeposited > 0);
     require(todayDate >= dateDeposited);
-    require(amountDeposited > 0);
-    require(balance(acceptedLendingTokenId) >= amountDeposited);
-    require(totalEarning >= amountDeposited);
-    require(totalVested > amountDeposited);
+    require(balance(acceptedLendingTokenId) >= amountDeposited, 'Currently not enough money to pay you, try again later.');
+    require(totalEarning >= amountDeposited);;
     require(balance(acceptedLendingTokenId) >= totalEarning);
-    require(totalVested > 0);  
-
+    
     delete liquidityData[this];
   
     transfer(totalEarning, acceptedLendingTokenId).to(lenderAccount);
