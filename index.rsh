@@ -60,7 +60,7 @@ export const main = Reach.App(() => {
   
   Lender.publish();
 
-  var totalSupply = 1000000000;
+  var totalSupply = 300000000;
   invariant(balance() == 0);
   while(totalSupply > 0) {
 
@@ -79,7 +79,7 @@ export const main = Reach.App(() => {
     
     Lender.publish(amount, createdAt, lendingUserAccount)
       .pay([[amount, acceptedLendingTokenId]])
-      .when(Lender == lendingUserAccount)
+      .when(Lender == lendingUserAccount && isNone(liquidityData[lendingUserAccount]))
       .timeout(false);
 
     require(totalSupply >= amount);
@@ -107,10 +107,17 @@ export const main = Reach.App(() => {
       
     continue;  
   }
+  commit();
 
-  var totalVested = 1000000000; 
+  Lender.only(() => {
+
+  })
+
+  Lender.publish();
+
+  var totalVested = balance(acceptedLendingTokenId); 
   invariant(balance() == 0);
-  while(totalVested > 0 && balance(acceptedLendingTokenId) > 0) {
+  while(totalVested > 0) {
     commit();
     
     Lender.only(() => {
@@ -144,7 +151,13 @@ export const main = Reach.App(() => {
     });
     Lender.publish(
       todayDate, dateDeposited, amountDeposited, daysVested, interest, totalEarning, lenderAccount
-    ).when(Lender == lenderAccount)
+    ).when(
+      Lender == lenderAccount && 
+      // dateDeposited > 0 && 
+      // amountDeposited > 0 &&
+      isSome(liquidityData[lenderAccount]) &&
+      totalVested > amountDeposited
+    )
     .timeout(false);
     
     require(dateDeposited > 0);

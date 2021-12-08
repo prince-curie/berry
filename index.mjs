@@ -39,25 +39,29 @@ const stdlib = loadStdlib(process.env);
     }
   });
 
-  const lending = lenders.map((lender, index) => {
-
+  for( let index = 0; index < lenders.length; index++) {
     console.log('Lender accepts lending token');
-    lenderAcc[index].tokenAccept(dashToken.id);
+    await lenderAcc[index].tokenAccept(dashToken.id);
+    console.log('minting tokens')
+    await dashToken.mint(lenderAcc[index], 400000000);
+  }
 
-    dashToken.mint(lenderAcc[index], 400000000);
-
+  const lending = lenders.map(async (lender, index) => {
+    const contractAddress = await ctcLender.getContractAddress();
+    const address = stdlib.formatAddress(contractAddress)
+    var contractBalance = await stdlib.balanceOf(address, dashToken.id)
+    console.log(`balance of contract ${contractBalance}`)
+    
     backend.Lender(lender, {
-     
       // implement Bob's interact object here
       ...Common(),
 
-     
       lend: async () => {
         console.log('try lending');
         console.log(`${lenderAcc[index].getAddress()} remaining balance ${await stdlib.balanceOf(lenderAcc[index], dashToken.id)}`)
 
-        // const contractAddress = await ctcOwner.getContractAddress();
-        // console.log(`balance of contract ${await stdlib.balanceOf(contractAddress, dashToken.id)}`)
+        contractBalance = await stdlib.balanceOf(address, dashToken.id)
+        console.log(`balance of contract ${contractBalance}`)
 
         return { 
           token: dashToken.id, amount: 100000000, createdAt: Math.floor(Date.now() / 86400000) 
@@ -69,11 +73,15 @@ const stdlib = loadStdlib(process.env);
         console.log(`${lenderAcc[index].getAddress()} remaining balance before ${await stdlib.balanceOf(lenderAcc[index], dashToken.id)}`)
         console.log(`The amount withdrawn is ${amount}`)
 
-        console.log(`${lenderAcc[index].getAddress()} remaining balance ${await stdlib.balanceOf(lenderAcc[index], dashToken.id)}`)
+        contractBalance = await stdlib.balanceOf(address, dashToken.id)
+        console.log(`balance of contract ${contractBalance}`)
+        
+        console.log(`${accLender.getAddress()} remaining balance ${await stdlib.balanceOf(accLender, dashToken.id)}`)
       },
     })
   })
   
+  console.log('owner')
   await Promise.all([
 
     backend.Owner(ctcOwner, {
@@ -82,10 +90,32 @@ const stdlib = loadStdlib(process.env);
         
       ...Common()
     }),
-    
+  // ])
     ...lending,
+  // backend.Lender(ctcLender, {
+  //     // implement Bob's interact object here
+  //     ...Common(),
+     
+  //     lend: async () => {
+  //       const contractAddress = await ctcLender.getContractAddress();
+  //       const address = stdlib.formatAddress(contractAddress)
+  //       const contractBalance = await stdlib.balanceOf(address, dashToken.id)
+  //       console.log(`balance of contract ${contractBalance}`)
 
-  ]);
+  //       for( let index = 0; index < lenders.length; index++) {
+  //         console.log('try lending');
+  //         console.log(`${accLender.getAddress()} remaining balance ${await stdlib.balanceOf(accLender, dashToken.id)}`)
+  //         console.log(`balance of contract ${contractBalance}`)
+
+
+
+  //         return { 
+  //           token: dashToken.id, amount: 100000000, createdAt: Math.floor(Date.now() / 86400000) 
+  //         };
+  //       }
+  //     },
+    // }),
+  ])
 
   console.log('Goodbye, Alice and Bob!');
 })();
