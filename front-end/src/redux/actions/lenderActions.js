@@ -1,56 +1,79 @@
 import { loadStdlib } from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
-import launchToken from '@reach-sh/stdlib/launchToken.mjs'
 import {
     ACCEPT_LIQUIDITY_TOKEN,
     LEND_TOKEN,
     AMOUNT_SENT
 } from '../types'
-const stdlib = loadStdlib(process.env);
+const stdlib = loadStdlib('ALGO');
 
-const id = ''
-
-export const launchTokenAction = (payLoad) => {
+//lend token
+export const lendTokenAction = (payLoad, amount, id) => {
     return async (dispatch) => {
-        const dashToken = await launchToken(stdlib, payLoad.accOwner, 'dashToken', 'DTN')
-        dispatch({ type: LAUNCH_TOKEN, payLoad: dashToken });
-    }
-}
+        console.log('was reached 22', payLoad, amount, id)
+        payLoad.accLender.tokenAccept(id);
 
-export const acceptLiquidityTokenAction = (payLoad) => {
-    return async (dispatch) => {
-        const ctcOwner = await payLoad.accOwner.contract(backend);
-        const ctcLender = await payLoad.accLender.contract(backend, ctcOwner.getInfo());
+        const ctcLender = await payLoad.accLender.contract(backend, payLoad.ctcOwner.getInfo());
 
-        await backend.Lender(ctcLender, {
-            ...stdlib.hasRandom,
-
-            acceptLiquidityToken: (token) => {
-                console.log(`Lender accepting liquidity token ${token}`)
-
-                payLoad.accLender.tokenAccept(token);
+        const Common = () => ({
+            viewLendingToken: ({ id, lendingAPY, borrowingAPY }) => {
+                console.log(`The token accepted for lending is: tokenId = ${id}, lendingAPY = ${lendingAPY} , borrowingAPY = ${borrowingAPY}`)
             },
-        })
-        dispatch({ type: ACCEPT_LIQUIDITY_TOKEN, payLoad: true });
-    }
-}
+            getDate: () => {
+                console.log('fetching date')
+                const date = Math.floor(Date.now() / 86400000)
+                console.log(date)
+                return date;
+            }
+        });
 
-export const lendTokenAction = (payLoad) => {
-    return async (dispatch) => {
-        const ctcOwner = await payLoad.accOwner.contract(backend);
-        const ctcLender = await payLoad.accLender.contract(backend, ctcOwner.getInfo());
+        const Common2 = () => ({
+            ...Common(),
+            lend: async () => {
 
-        await backend.Lender(ctcLender, {
-            ...stdlib.hasRandom,
-
-            lend: () => {
                 console.log('try lending');
-                return { token: id, amount: 100000 };
+                console.log(`${payLoad.accLender.getAddress()} remaining balance ${await stdlib.balanceOf(payLoad.accLender, id)}`)
+
+                return {
+                    token: id, amount: amount, createdAt: Math.floor(Date.now() / 86400000)
+                };
+            },
+        });
+
+        await Promise.all([
+            backend.Lender(ctcLender, {
+                ...Common2()
+            })
+        ])
+    }
+}
+
+//withdraw money
+export const withdrawAction = (payLoad) => {
+    return async (dispatch) => {
+        // const ctcOwner = await payLoad.accOwner.contract(backend);
+        const ctcLender = await payLoad.accLender.contract(backend, payLoad.ctcOwner.getInfo());
+
+        const withdrawal = () => ({
+            withdraw: async (amount) => {
+                console.log('try withdrawing');
+                console.log(`${payLoad.accLender.getAddress()} remaining balance before ${await stdlib.balanceOf(payLoad.accLender, process.env.REACT_APP_TOKEN_ID)}`)
+                console.log(`The amount withdrawn is ${amount}`)
+
+                console.log(`${payLoad.accLender.getAddress()} remaining balance ${await stdlib.balanceOf(payLoad.accLender,  process.env.REACT_APP_TOKEN_ID)}`)
             },
         })
+
+        await Promise.all([
+            backend.Lender(ctcLender, {
+                ...withdrawal()
+            })
+        ])
         dispatch({ type: LEND_TOKEN, payLoad: true });
     }
 }
+
+
 
 export const amountSentAction = (payLoad) => {
     return async (dispatch) => {

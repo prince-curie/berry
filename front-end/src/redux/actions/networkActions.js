@@ -5,8 +5,9 @@ import {
     SET_CONTRACT,
     STORE_USER
 } from '../types';
-//import { loadStdlib } from "@reach-sh/stdlib";
-import * as reach from '@reach-sh/stdlib/ALGO'
+import { loadStdlib } from '@reach-sh/stdlib';
+const reach = loadStdlib('ALGO');
+//reach.setProviderByName('TestNet')
 
 export const setAccount = (acc) => {
     return {
@@ -16,16 +17,20 @@ export const setAccount = (acc) => {
 }
 
 export const setBalance = (bal) => {
-    return {
-        type: SET_BALANCE,
+    return (dispatch) => {
+        dispatch({
+          type: SET_BALANCE,
         payload: bal
+        })
     };
 }
 
 export const setNetwork = (net) => {
-    return {
-        type: SET_NETWORK,
+    return (dispatch) => {
+        dispatch({
+          type: SET_NETWORK,
         payload: net
+        })
     };
 }
 
@@ -36,6 +41,12 @@ export const setContract = (ctc) => {
     };
 }
 
+export const disconnect = () => {
+  return (dispatch) => {
+    dispatch({type: STORE_USER, payload: null})
+  }
+}
+
 export const storeWallet = (payload) => {
      return async (dispatch) => {
          let user;
@@ -44,14 +55,14 @@ export const storeWallet = (payload) => {
             window.AlgoSigner.connect()
             // finds the TestNet accounts currently in AlgoSigner
             .then(() => window.AlgoSigner.accounts({
-                ledger: 'MainNet'
+                ledger: 'TestNet'
             }))
             .then((accountData) => {
                 // the accountData object should contain the Algorand addresses from TestNet that AlgoSigner currently knows about
-                console.log(accountData[0]);
-                user = accountData[0]
-                localStorage.setItem('address', user.address)
-                dispatch({ type: STORE_USER, payLoad: accountData[0] });
+                console.log('ahajakl',accountData);
+                user = accountData
+                localStorage.setItem('address', user)
+                dispatch({ type: STORE_USER, payload: accountData });
             })
             .catch((e) => {
                 // handle errors and perform error cleanup here
@@ -64,3 +75,43 @@ export const storeWallet = (payload) => {
    
      }
 }
+
+export const handleImportAccount = (mnemonic) => {
+    return async (dispatch) => {
+    try {
+      const acc = await reach.newAccountFromMnemonic(mnemonic.trim())
+
+      // check balance of account before funding
+      let balanceOfAcc = await reach.balanceOf(acc)
+      console.log("Checking the balance of our imported account")
+      console.log(reach.formatCurrency(balanceOfAcc, 6))
+      dispatch({ type: STORE_USER, payload: acc });
+
+    }
+    catch (err) {
+      console.log(err)
+      alert('Something went wrong. Please try again later');
+    }
+}
+  }
+
+  export const createNewAccount = () => {
+    return async (dispatch) => {
+    try {
+      // Create New Account
+      const acc = await reach.createAccount();
+
+      // check balance of given Account
+      let balanceOfAcc = await reach.balanceOf(acc)
+      console.log("Checking the balance of our new account", acc)
+      console.log(reach.formatCurrency(balanceOfAcc, 6))
+
+      // Set this account as the global account
+      dispatch({ type: STORE_USER, payload: acc });
+    
+    } catch (error) {
+      console.log(error)
+      alert('Something went wrong. Please try again later');
+    }
+}
+  }

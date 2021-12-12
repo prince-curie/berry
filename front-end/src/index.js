@@ -8,7 +8,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import reducers from "./redux/reducer/index"
+import * as backend from './redux/actions/build/index.main.mjs'
 import thunk from 'redux-thunk';
+import { loadStdlib } from '@reach-sh/stdlib';
+const reach = loadStdlib('ALGO');
+reach.setProviderByName('TestNet')
+
 
 const store = createStore(reducers, compose(
   applyMiddleware(thunk)

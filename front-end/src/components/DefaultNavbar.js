@@ -16,22 +16,22 @@ import Logo from '../assets/img/logo.png';
 import Algo from '../assets/img/algo_logo.png';
 
 import { useDispatch, useSelector } from "react-redux";
-import { storeWallet } from '../redux/actions/networkActions';
+import { createNewAccount, disconnect, handleImportAccount, storeWallet } from '../redux/actions/networkActions';
 
 export default function DefaultNavbar() {
     const [openNavbar, setOpenNavbar] = useState(false);
     const dispatch = useDispatch()
+    const user = useSelector(state => state.net)
 
-  
 
-    const handleConnect = () => {
-        dispatch(storeWallet('ALGO'))
+    const handleInput = () => {
+        const mnemonic = prompt("Please Input your wallet mnemonic");
+        if (mnemonic && mnemonic.length > 10) {
+            dispatch(handleImportAccount(mnemonic))
+        } else {
+            alert('Invalid mnemonic')
+        }
     }
-
-    useEffect(() => {
-        const user = JSON.stringify(localStorage.getItem('address'))
-    console.log('my user', user)
-    }, [dispatch])
 
     return (
         <Navbar color="transparent" navbar>
@@ -87,47 +87,81 @@ export default function DefaultNavbar() {
                                     &nbsp;Assets
                                 </NavLink>
                             </Link>
-                           
+
 
                             <div className="text-white bg-new-gray-100 rounded-lg">
-                                <Dropdown
-                                    color="transparent"
-                                    size="sm"
-                                    buttonType="link"
-
-                                    buttonText={
-                                        <span className="text-green-400 normal-case text-sm" >
-                                            Connect to a wallet
-                                        </span>
-                                    }
-                                    ripple="light"
-                                >
-
-                                    <DropdownItem color="lightGreen">
-                                        <div className="space-x-4"
-                                            onClick={() => handleConnect()}
+                                {
+                                    user.user ?
+                                        <Dropdown
+                                            color="transparent"
+                                            size="sm"
+                                            buttonType="link"
+                                            buttonText={
+                                                <span className="text-green-400 normal-case text-sm" >
+                                                    connected
+                                                </span>
+                                            }
+                                            ripple="light"
                                         >
-                                            <span className="inline-block text-md" >
-                                                Algo wallet
-                                            </span>
-                                            <img className="inline-block" alt="dai" src={Algo} />
 
-                                        </div>
-                                    </DropdownItem>
+                                            <DropdownItem color="lightGreen">
 
-                                    {/* <Link to="/">
-                                        <DropdownItem color="lightGreen">
-                                        <div className="space-x-4" >
-                                           <span className="inline-block text-md" >
-                                                Metamask wallet
-                                            </span>
-                                           <img className="inline-block" alt="dai" src={Meta} />
-                                           
-                                           </div>
-                                        </DropdownItem>
-                                    </Link> */}
+                                                <div className="space-x-4"
+                                                    onClick={() => dispatch(disconnect())}
+                                                >
+                                                    <span className="inline-block text-md" >
+                                                        Disconnect Account
+                                                    </span>
 
-                                </Dropdown>
+
+                                                </div>
+                                            </DropdownItem>
+
+                                        </Dropdown>
+                                        :
+                                        <Dropdown
+                                            color="transparent"
+                                            size="sm"
+                                            buttonType="link"
+
+                                            buttonText={
+                                                <span className="text-green-400 normal-case text-sm" >
+                                                    Connect to a wallet
+                                                </span>
+                                            }
+                                            ripple="light"
+                                        >
+
+                                            <DropdownItem color="lightGreen">
+
+                                                <div className="space-x-4"
+                                                    onClick={() => handleInput()}
+                                                >
+                                                    <span className="inline-block text-md" >
+                                                        Import Account
+                                                    </span>
+
+
+                                                </div>
+                                            </DropdownItem>
+
+                                            <DropdownItem color="lightGreen">
+
+                                                <div className="space-x-4"
+                                                    onClick={() => dispatch(createNewAccount())}
+                                                >
+                                                    <span className="inline-block text-md" >
+                                                        Create Account
+                                                    </span>
+
+
+                                                </div>
+
+                                            </DropdownItem>
+
+                                        </Dropdown>
+                                }
+
                             </div>
 
 

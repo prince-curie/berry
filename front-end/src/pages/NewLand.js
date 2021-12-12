@@ -13,8 +13,18 @@ import Algo from '../assets/img/spec_algo.png';
 import StatusCard from '../components/StatusCard';
 import { Link } from "react-router-dom";
 import Icon from '@material-tailwind/react/Icon';
+import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { acceptTokenAction, deployContractAction, viewLendingTokenAction } from '../redux/actions/ownerActions';
+import { setBalance } from '../redux/actions/networkActions';
 
 export default function NewLanding() {
+    const dispatch = useDispatch()
+
+    React.useEffect(() => {
+
+      dispatch(deployContractAction())
+    },[dispatch])
     
 
     return (

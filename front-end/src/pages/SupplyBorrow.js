@@ -7,8 +7,12 @@ import Icon from '@material-tailwind/react/Icon';
 
 import TableCard from '../components/TableCard';
 import TableDetail from '../components/TableDetail';
+import { useDispatch, useSelector } from 'react-redux';
+import { lendTokenAction } from '../redux/actions/lenderActions';
 
 export default function LendingPool() {
+    const dipatch = useDispatch()
+    const network = useSelector(state => state.net)
 
     let { selected } = useParams();
 
@@ -32,6 +36,24 @@ export default function LendingPool() {
         setClicked(value)
         } else {
             alert('algo is not set as a collateral')
+        }
+    }
+
+    function handleSubmit() {
+        console.log('touched', network, clicked)
+        const payLoad = {
+            accLender: network.user,
+            ctcOwner: network.ctc
+        }
+        const amount = parseInt(input)
+        const id = network.id
+        switch (clicked) {
+            case 'Supply':
+                dipatch(lendTokenAction(payLoad, amount, id))
+                break;
+        
+            default:
+                break;
         }
     }
 
@@ -170,7 +192,7 @@ export default function LendingPool() {
                 <div onClick={e => {
                     // do not close modal if anything inside modal content is clicked
                     e.stopPropagation();
-                }} class="bg-white rounded shadow-lg w-1/3">
+                }} class="bg-white rounded shadow-lg w-2/3">
                     {/* <!-- modal header --> */}
                     <div class="border-b px-4 py-2 flex justify-around items-center">
                         <h3 class="font-semibold text-lg">{clicked}</h3>
@@ -238,7 +260,7 @@ export default function LendingPool() {
                                     color="transparent"
                                     className="flex-1 bg-new-green py-4 w-2/3 mb-4 rounded-full"
                                     ripple="dark"
-                                    onClick={() => { }}
+                                    onClick={() => handleSubmit()}
                                 >
                                     <span className="text-white  normal-case text-sm" >
                                         {clicked}
@@ -249,7 +271,7 @@ export default function LendingPool() {
                                     color="transparent"
                                     className="flex-1 bg-new-purple py-4 w-2/3 mb-4 rounded-full"
                                     ripple="dark"
-                                    onClick={() => { }}
+                                    onClick={() => handleSubmit()}
                                 >
                                     <span className="text-white  normal-case text-sm" >
                                         {clicked}

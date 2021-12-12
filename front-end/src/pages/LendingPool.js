@@ -8,8 +8,14 @@ import { Link } from "react-router-dom";
 
 import DefaultNavbar from '../components/DefaultNavbar';
 import USDC from '../assets/img/USDC.png'
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function LendingPool() {
+    const dispatch = useDispatch()
+
+
+    const user = useSelector(state => state.net)
+    console.log('workerdd', user)
 
     return (
 
