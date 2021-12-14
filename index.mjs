@@ -64,7 +64,7 @@ const stdlib = loadStdlib(process.env);
         console.log(`balance of contract ${contractBalance}`)
 
         return { 
-          token: dashToken.id, amount: 100000000, createdAt: Math.floor(Date.now() / 86400000) 
+          token: dashToken.id, amount: 1000, createdAt: Math.floor(Date.now() / 86400000) 
         };
       },
 

@@ -60,7 +60,7 @@ export const main = Reach.App(() => {
   
   Lender.publish();
 
-  var totalSupply = 300000000;
+  var totalSupply = 3000;
   invariant(balance() == 0);
   while(totalSupply > 0) {
 
