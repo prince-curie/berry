@@ -3,6 +3,8 @@ export const SET_BALANCE = 'SET_BALANCE';
 export const SET_NETWORK = 'SET_NETWORK';
 export const SET_CONTRACT = 'SET_CONTRACT';
 export const SET_ID = 'SET_ID';
+export const SET_LENDER_CONTRACT = 'SET_LENDER_CONTRACT';
+export const SET_USER_BALANCE = 'SET_USER_BALANCE';
 
 export const STORE_USER = 'STORE_USER'
 

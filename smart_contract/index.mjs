@@ -64,7 +64,7 @@ const stdlib = loadStdlib(process.env);
         console.log(`balance of contract ${contractBalance}`)
 
         return { 
-          token: dashToken.id, amount: 100000000, createdAt: Math.floor(Date.now() / 86400000) 
+          token: dashToken.id, amount: 1000, createdAt: Math.floor(Date.now() / 86400000) 
         };
       },
 
@@ -75,8 +75,6 @@ const stdlib = loadStdlib(process.env);
 
         contractBalance = await stdlib.balanceOf(address, dashToken.id)
         console.log(`balance of contract ${contractBalance}`)
-        
-        console.log(`${accLender.getAddress()} remaining balance ${await stdlib.balanceOf(accLender, dashToken.id)}`)
       },
     })
   })
@@ -90,9 +88,8 @@ const stdlib = loadStdlib(process.env);
         
       ...Common()
     }),
-  // ])
+
     ...lending,
-  
   ])
 
   console.log('Goodbye, Alice and Bob!');

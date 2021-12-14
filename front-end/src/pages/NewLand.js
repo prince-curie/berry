@@ -2,7 +2,7 @@ import DefaultNavbar from '../components/DefaultNavbar';
 import CardImage from '@material-tailwind/react/CardImage';
 import CardBody from '@material-tailwind/react/CardBody';
 import H5 from '@material-tailwind/react/Heading5';
-import H3 from '@material-tailwind/react/Heading3';
+import H4 from '@material-tailwind/react/Heading4';
 import LeadText from '@material-tailwind/react/LeadText';
 import Bag from '../assets/img/bag.png';
 import DefaultFooter from '../components/DefaultFooter';
@@ -17,13 +17,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { acceptTokenAction, deployContractAction, viewLendingTokenAction } from '../redux/actions/ownerActions';
 import { setBalance } from '../redux/actions/networkActions';
+import { contractBalanceAction } from '../redux/actions/lenderActions';
 
 export default function NewLanding() {
     const dispatch = useDispatch()
+    const user = useSelector(state => state.net)
 
     React.useEffect(() => {
 
-      dispatch(deployContractAction())
+      !user.ctc && dispatch(deployContractAction())
+      user.ctcLender && dispatch(contractBalanceAction({ctcLender: user.ctcLender, id:process.env.REACT_APP_TOKEN_ID}))
     },[dispatch])
     
 
@@ -38,11 +41,11 @@ export default function NewLanding() {
                 <div className="container max-w-8xl mt-16  mx-auto px-4">
                     <div className="flex flex-wrap items-center sm:mt-8 md:pt-16 mt-24">
                         <div className="w-full md:text-3xl  tracking-wider md:w-6/12 px-2 mx-auto">
-                            <H3 className="" color="white">
+                            <H4 className="" color="white">
                                 <span className=" bg-clip-text text-transparent font-black bg-gradient-to-b from-light-color-500  to-green-500" >
                                     The Decentralized lending platform for everyone
                                 </span>
-                            </H3>
+                            </H4>
                             <LeadText color="white">
                                An Open financial protocol for supplying and borrow assets at autonomous interest rates
                             </LeadText>
@@ -59,7 +62,7 @@ export default function NewLanding() {
                         OUR LIQUIDITY POOL
                     </h1>
                     <h1 className=" tracking-wider font-bold md:mb-16  md:text-4xl">
-                        <span className="bg-clip-text text-transparent font-bold bg-gradient-to-b from-light-color-500  to-green-500" > $ {'15,637,488.18'} </span>
+                        <span className="bg-clip-text text-transparent font-bold bg-gradient-to-b from-light-color-500  to-green-500" > $ {user.bal ? user.bal : 0} </span>
                     </h1>
                     <div className="inline-flex" >
                         <Link to="/mode/supply">

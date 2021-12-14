@@ -3,7 +3,8 @@ import {
     SET_BALANCE,
     SET_NETWORK,
     SET_CONTRACT,
-    STORE_USER
+    STORE_USER,
+    SET_USER_BALANCE
 } from '../types';
 import { loadStdlib } from '@reach-sh/stdlib';
 const reach = loadStdlib('ALGO');
@@ -85,7 +86,13 @@ export const handleImportAccount = (mnemonic) => {
       let balanceOfAcc = await reach.balanceOf(acc)
       console.log("Checking the balance of our imported account")
       console.log(reach.formatCurrency(balanceOfAcc, 6))
+      const balance = reach.formatCurrency(balanceOfAcc, 6)
+      if(balance < 4){
+        alert('You do not have enough balance to make use of this platform')
+        dispatch(disconnect())
+      } 
       dispatch({ type: STORE_USER, payload: acc });
+      dispatch({ type: SET_USER_BALANCE, payload: balance });
 
     }
     catch (err) {

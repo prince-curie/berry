@@ -9,7 +9,12 @@ import {
     SET_CONTRACT,
     SET_ID
 } from '../types'
+import { create } from "ipfs-http-client";
+
 const stdlib = loadStdlib('ALGO');
+
+
+const client = create('https://ipfs.infura.io:5001/api/v0');
 
 const id = process.env.REACT_APP_TOKEN_ID
 
@@ -22,9 +27,11 @@ export const launchTokenAction = (payLoad) => {
 
 //DEPLOYING CONTRACT BY OWNER
 export const deployContractAction = () => {
-   
+
     return async (dispatch) => {
         try {
+
+       
             const id = process.env.REACT_APP_TOKEN_ID
             const mnemonic = process.env.REACT_APP_OWNER_MNEMONIC
             console.log('received mnemonice', id)
@@ -32,27 +39,27 @@ export const deployContractAction = () => {
             console.log('received addresss', acc)
             const ctcOwner = acc.contract(backend);
             console.log('passed here', ctcOwner)
-           // const dashToken = await launchToken(stdlib, acc, 'DashToken', 'DTN')
-           // console.log(`dashtoken ==> ${dashToken.id}`)
-            dispatch({type: SET_CONTRACT, payload: ctcOwner})
-            dispatch({type: SET_ID, payload: id})
+           
+            dispatch({ type: SET_CONTRACT, payload: ctcOwner })
+            dispatch({ type: SET_ID, payload: id })
             dispatch({ type: SET_ACCOUNT, payload: acc })
-    
+            
+
             const Common = () => ({
-    
+
                 viewLendingToken: ({ id, lendingAPY, borrowingAPY }) => {
                     console.log(`The token accepted for lending is: tokenId = ${id}, lendingAPY = ${lendingAPY} , borrowingAPY = ${borrowingAPY}`)
                 },
             });
-    
+
             await Promise.all([
                 backend.Owner(ctcOwner, {
                     acceptToken: id,
                     ...Common()
                 }),
-    
+
             ]);
-            
+
         } catch (error) {
             console.log(error)
         }

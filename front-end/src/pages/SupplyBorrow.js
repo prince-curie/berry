@@ -8,7 +8,7 @@ import Icon from '@material-tailwind/react/Icon';
 import TableCard from '../components/TableCard';
 import TableDetail from '../components/TableDetail';
 import { useDispatch, useSelector } from 'react-redux';
-import { lendTokenAction } from '../redux/actions/lenderActions';
+import { lendTokenAction, withdrawAction } from '../redux/actions/lenderActions';
 
 export default function LendingPool() {
     const dipatch = useDispatch()
@@ -31,9 +31,9 @@ export default function LendingPool() {
     }, [])
 
     const handleBorrow = value => {
-        if(collat) {
-            setModalShow(''); 
-        setClicked(value)
+        if (collat) {
+            setModalShow('');
+            setClicked(value)
         } else {
             alert('algo is not set as a collateral')
         }
@@ -49,9 +49,14 @@ export default function LendingPool() {
         const id = network.id
         switch (clicked) {
             case 'Supply':
-                dipatch(lendTokenAction(payLoad, amount, id))
+                network.user && dipatch(lendTokenAction(payLoad, amount, id))
+                setModalShow('hidden')
                 break;
-        
+            case 'Withdraw':
+                network.user && dipatch(withdrawAction(payLoad, amount))
+                setModalShow('hidden')
+                break;
+
             default:
                 break;
         }
@@ -132,7 +137,7 @@ export default function LendingPool() {
                                         Wallet Balance
                                     </h1>
                                     <h1 className=" tracking-wider font-bold md:mb-8  md:text-xl">
-                                        <span className="bg-clip-text text-white opacity-75" > $ {'6,745,637,488.18'} </span>
+                                        <span className="bg-clip-text text-white opacity-75" >{network.userBalance ? network.userBalance : 0} ALGOS</span>
                                     </h1>
                                 </div>
 
@@ -150,7 +155,7 @@ export default function LendingPool() {
                                         Total Supplied
                                     </h1>
                                     <h1 className=" tracking-wider font-bold md:mb-8  md:text-xl">
-                                        <span className="bg-clip-text text-white  opacity-75" > $ {'14,745,637,488.18'} </span>
+                                        <span className="bg-clip-text text-white  opacity-75" > $ {network.bal ? network.bal : 0} </span>
                                     </h1>
                                 </div>
                             </div>
@@ -206,7 +211,9 @@ export default function LendingPool() {
                     </div>
                     {/* <!-- modal body --> */}
                     <div class="pb-3">
-                        <input value={input} class="border bg-gray-100 border-gray-200 text-center text-lg p-8 rounded-r-lg outline-none focus:ring-1 ring-gray-100 w-full pl-1"
+                        {
+                           
+                            <input value={input} class="border bg-gray-100 border-gray-200 text-center text-lg p-8 rounded-r-lg outline-none focus:ring-1 ring-gray-100 w-full pl-1"
                             id=""
                             name=""
                             required="true"
@@ -214,6 +221,7 @@ export default function LendingPool() {
                             type="text"
                             placeholder={`Enter the amount you want to ${clicked}`}
                         />
+                        }
                     </div>
 
                     <table className=" ml-16  w-full bg-transparent border-collapse">
