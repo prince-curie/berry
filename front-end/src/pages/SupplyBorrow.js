@@ -53,7 +53,12 @@ export default function LendingPool() {
                 setModalShow('hidden')
                 break;
             case 'Withdraw':
-                network.user && dipatch(withdrawAction(payLoad, amount))
+                const data = {
+                    accLender: network.user,
+                    ctcOwner: network.ctc,
+                    date: Math.floor(Date.now() / 86400000)
+                } 
+                network.user && dipatch(withdrawAction(data))
                 setModalShow('hidden')
                 break;
 
@@ -211,8 +216,7 @@ export default function LendingPool() {
                     </div>
                     {/* <!-- modal body --> */}
                     <div class="pb-3">
-                        {
-                           
+                        { clicked !== 'Withdraw' &&
                             <input value={input} class="border bg-gray-100 border-gray-200 text-center text-lg p-8 rounded-r-lg outline-none focus:ring-1 ring-gray-100 w-full pl-1"
                             id=""
                             name=""

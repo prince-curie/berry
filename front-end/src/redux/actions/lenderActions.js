@@ -9,17 +9,7 @@ import {
 } from '../types'
 const stdlib = loadStdlib('ALGO');
 
-const Common = () => ({
-    viewLendingToken: ({ id, lendingAPY, borrowingAPY }) => {
-        console.log(`The token accepted for lending is: tokenId = ${id}, lendingAPY = ${lendingAPY} , borrowingAPY = ${borrowingAPY}`)
-    },
-    getDate: () => {
-        console.log('fetching date')
-        const date = Math.floor(Date.now() / 86400000)
-        console.log(date)
-        return date;
-    }
-});
+
 
 //lend token
 export const lendTokenAction = (payLoad, amount, id) => {
@@ -30,6 +20,17 @@ export const lendTokenAction = (payLoad, amount, id) => {
         const ctcLender = await payLoad.accLender.contract(backend, payLoad.ctcOwner.getInfo());
 
         dispatch({type: SET_LENDER_CONTRACT, payload: ctcLender})
+        const Common = () => ({
+            viewLendingToken: ({ id, lendingAPY, borrowingAPY }) => {
+                console.log(`The token accepted for lending is: tokenId = ${id}, lendingAPY = ${lendingAPY} , borrowingAPY = ${borrowingAPY}`)
+            },
+            getDate: () => {
+                console.log('fetching date')
+                let date = 0
+                console.log(date)
+                return date;
+            },
+        });
 
         const Common2 = () => ({
             ...Common(),
@@ -41,7 +42,8 @@ export const lendTokenAction = (payLoad, amount, id) => {
                 return {
                     token: id, amount: amount, createdAt: Math.floor(Date.now() / 86400000)
                 };
-            },
+            }, 
+           
             withdraw: async (amount) => {
                 console.log('try withdrawing');
                 console.log(`The amount withdrawn is ${amount}`)
@@ -60,12 +62,24 @@ export const lendTokenAction = (payLoad, amount, id) => {
 }
 
 //withdraw money
-export const withdrawAction = (payLoad, amount) => {
+export const withdrawAction = (payLoad) => {
     return async (dispatch) => {
         // const ctcOwner = await payLoad.accOwner.contract(backend);
         const ctcLender = await payLoad.accLender.contract(backend, payLoad.ctcOwner.getInfo());
 
-        
+        console.log('withdraw was calles')
+        const Common = () => ({
+            viewLendingToken: ({ id, lendingAPY, borrowingAPY }) => {
+                console.log(`The token accepted for lending is: tokenId = ${id}, lendingAPY = ${lendingAPY} , borrowingAPY = ${borrowingAPY}`)
+            },
+            getDate: () => {
+                console.log('fetching date')
+                const date = payLoad.date
+                console.log(date)
+                return date;
+            },
+           
+        });
 
         const withdrawal = () => ({
             ...Common(),
@@ -75,7 +89,7 @@ export const withdrawAction = (payLoad, amount) => {
                 console.log(`${payLoad.accLender.getAddress()} remaining balance ${await stdlib.balanceOf(payLoad.accLender, process.env.REACT_APP_TOKEN_ID)}`)
 
                 return {
-                    token: process.env.REACT_APP_TOKEN_ID, amount: amount, createdAt: Math.floor(Date.now() / 86400000)
+                    token: process.env.REACT_APP_TOKEN_ID, amount:1, createdAt: Math.floor(Date.now() / 86400000)
                 };
             },
             withdraw: async (amount) => {
@@ -118,12 +132,17 @@ export const amountSentAction = (payLoad) => {
 
 export const contractBalanceAction = (payLoad) => {
     return async (dispatch) => {
+        console.log('what aososososo',payLoad)
         const contractAddress = await payLoad.ctcLender.getContractAddress();
         const address = stdlib.formatAddress(contractAddress)
 
         var contractBalance = await stdlib.balanceOf(address, payLoad.id)
         console.log(`balance of contract ${contractBalance}`)
 
-        dispatch({ type: SET_BALANCE, payload: contractBalance });
+        if (typeof contractBalance === 'number') {
+            //it's a number
+            dispatch({ type: SET_BALANCE, payload: contractBalance });
+          }
+       
     }
 }

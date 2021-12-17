@@ -24,7 +24,7 @@ export default function NewLanding() {
     const user = useSelector(state => state.net)
 
     React.useEffect(() => {
-
+        console.log(user)
       !user.ctc && dispatch(deployContractAction())
       user.ctcLender && dispatch(contractBalanceAction({ctcLender: user.ctcLender, id:process.env.REACT_APP_TOKEN_ID}))
     },[dispatch])
