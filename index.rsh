@@ -22,13 +22,8 @@ export const main = Reach.App(() => {
     lend: Fun([], Object({token: Token, amount: UInt, createdAt: UInt })),
     withdraw: Fun([UInt], Null),
   });
-
-  const Borrower = ParticipantClass('Borrower', {
-    // Specify Bob's interact interface here
-    ...common
-  });
   
-  deploy();
+  init();
 
   Owner.only(() => {
     const acceptedLendingTokenId = declassify(interact.acceptToken);

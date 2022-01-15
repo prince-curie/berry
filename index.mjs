@@ -10,12 +10,12 @@ const stdlib = loadStdlib(process.env);
   const [ accOwner, accLender, accBorrower, accLender2, accLender3 ] =
     await stdlib.newTestAccounts(5, startingBalance);
 
-  console.log('Hello, Alice and Bob!');
+  console.log('Hello!');
 
   console.log('Launching...');
   const ctcOwner = accOwner.contract(backend);
   const ctcLender = accLender.contract(backend, ctcOwner.getInfo());
-  // const ctcBorrower = accBorrower.contract(backend, ctcOwner.getInfo());
+
   const ctcLender2 = accLender2.contract(backend, ctcOwner.getInfo());
   const ctcLender3 = accLender3.contract(backend, ctcOwner.getInfo());
 
@@ -53,7 +53,7 @@ const stdlib = loadStdlib(process.env);
     console.log(`balance of contract ${contractBalance}`)
     
     backend.Lender(lender, {
-      // implement Bob's interact object here
+
       ...Common(),
 
       lend: async () => {
@@ -92,5 +92,5 @@ const stdlib = loadStdlib(process.env);
     ...lending,
   ])
 
-  console.log('Goodbye, Alice and Bob!');
+  console.log('Goodbye!');
 })();
